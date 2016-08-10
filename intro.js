@@ -336,7 +336,7 @@
     _reassignElement(nextStep);
 
     if (typeof (this._introBeforeChangeCallback) !== 'undefined') {
-      this._introBeforeChangeCallback.call(this, nextStep.element);
+      this._introBeforeChangeCallback.call(this, nextStep);
     }
 
     _showElement.call(this, nextStep);
@@ -367,7 +367,7 @@
     _showElement.call(this, nextStep);
   }
 
-  function _reassignElement() {
+  function _reassignElement(targetElement) {
     var reselectedElement;
 
     if (targetElement.element.className.indexOf('introjsFloatingElement') === -1 &&
@@ -791,7 +791,7 @@
     _reassignElement(targetElement);
 
     if (typeof (this._introChangeCallback) !== 'undefined') {
-      this._introChangeCallback.call(this, targetElement.element);
+      this._introChangeCallback.call(this, targetElement);
     }
 
     var self = this,
@@ -1115,7 +1115,7 @@
     }
 
     if (typeof (this._introAfterChangeCallback) !== 'undefined') {
-      this._introAfterChangeCallback.call(this, targetElement.element);
+      this._introAfterChangeCallback.call(this, targetElement);
     }
   }
 
