@@ -97,6 +97,9 @@
         currentItem.step = introItems.length + 1;
         //use querySelector function only when developer used CSS selector
         if (typeof(currentItem.element) === 'string') {
+          // cache initial properties. They will be reused in order to reassign dynamically appearing elements
+          currentItem.elementSelector = currentItem.element;
+          currentItem.initialPosition = currentItem.position;
           //grab the element with given selector from the page
           currentItem.element = document.querySelector(currentItem.element);
         }
@@ -762,9 +765,18 @@
    * @param {Object} targetElement
    */
   function _showElement(targetElement) {
+    var reselectedElement;
 
     if (typeof (this._introChangeCallback) !== 'undefined') {
       this._introChangeCallback.call(this, targetElement.element);
+    }
+
+    if (targetElement.elementSelector && targetElement.element.className.indexOf('introjsFloatingElement') > -1) {
+      reselectedElement = document.querySelector(targetElement.elementSelector);
+      if (reselectedElement) {
+        targetElement.element = reselectedElement;
+        targetElement.position = targetElement.initialPosition || 'inherit';
+      }
     }
 
     var self = this,
@@ -785,6 +797,7 @@
     if (oldHelperLayer != null) {
       var oldHelperNumberLayer = oldReferenceLayer.querySelector('.introjs-helperNumberLayer'),
           oldtooltipLayer      = oldReferenceLayer.querySelector('.introjs-tooltiptext'),
+          oldtooltipTitleLayer      = oldReferenceLayer.querySelector('.introjs-tooltiptitle'),
           oldArrowLayer        = oldReferenceLayer.querySelector('.introjs-arrow'),
           oldtooltipContainer  = oldReferenceLayer.querySelector('.introjs-tooltip'),
           skipTooltipButton    = oldReferenceLayer.querySelector('.introjs-skipbutton'),
@@ -832,8 +845,15 @@
         if (oldHelperNumberLayer != null) {
           oldHelperNumberLayer.innerHTML = targetElement.step;
         }
+        //set current tooltip title
+        if (targetElement.title) {
+          oldtooltipTitleLayer.innerHTML = targetElement.title;
+          oldtooltipTitleLayer.style.display = 'block';
+        } else {
+          oldtooltipTitleLayer.style.display = 'none';
+        }
         //set current tooltip text
-        oldtooltipLayer.innerHTML = targetElement.intro;
+        oldtooltipLayer.innerHTML = targetElement.content;
         //set the tooltip position
         oldtooltipContainer.style.display = "block";
         _placeTooltip.call(self, targetElement.element, oldtooltipContainer, oldArrowLayer, oldHelperNumberLayer);
@@ -863,6 +883,7 @@
           referenceLayer    = document.createElement('div'),
           arrowLayer        = document.createElement('div'),
           tooltipLayer      = document.createElement('div'),
+          tooltipTitleLayer  = document.createElement('div'),
           tooltipTextLayer  = document.createElement('div'),
           bulletsLayer      = document.createElement('div'),
           progressLayer     = document.createElement('div'),
@@ -881,8 +902,15 @@
 
       arrowLayer.className = 'introjs-arrow';
 
+      tooltipTitleLayer.className = 'introjs-tooltiptitle';
+      tooltipTitleLayer.innerHTML = targetElement.title;
+
+      if (!targetElement.title) {
+        tooltipTitleLayer.style.display = 'none';
+      }
+
       tooltipTextLayer.className = 'introjs-tooltiptext';
-      tooltipTextLayer.innerHTML = targetElement.intro;
+      tooltipTextLayer.innerHTML = targetElement.content;
 
       bulletsLayer.className = 'introjs-bullets';
 
@@ -929,6 +957,7 @@
       }
 
       tooltipLayer.className = 'introjs-tooltip';
+      tooltipLayer.appendChild(tooltipTitleLayer);
       tooltipLayer.appendChild(tooltipTextLayer);
       tooltipLayer.appendChild(bulletsLayer);
       tooltipLayer.appendChild(progressLayer);
@@ -1493,6 +1522,7 @@
     }
 
     var tooltipLayer = document.createElement('div');
+    var tooltipTitleLayer = document.createElement('div');
     var tooltipTextLayer = document.createElement('div');
     var arrowLayer = document.createElement('div');
     var referenceLayer = document.createElement('div');
@@ -1510,6 +1540,7 @@
       }
     };
 
+    tooltipTitleLayer.className = 'introjs-tooltiptitle';
     tooltipTextLayer.className = 'introjs-tooltiptext';
 
     var tooltipWrapper = document.createElement('p');
@@ -1525,6 +1556,10 @@
 
     arrowLayer.className = 'introjs-arrow';
     tooltipLayer.appendChild(arrowLayer);
+
+    if (item.title) {
+      tooltipLayer.appendChild(tooltipTitleLayer);
+    }
 
     tooltipLayer.appendChild(tooltipTextLayer);
 
@@ -1753,5 +1788,6 @@
   };
 
   exports.introJs = introJs;
+
   return introJs;
 }));
