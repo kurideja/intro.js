@@ -361,7 +361,7 @@
 
     if (typeof (this._introBeforeChangeCallback) !== 'undefined') {
 
-      this._introBeforeChangeCallback.call(this, nextStep.element);
+      this._introBeforeChangeCallback.call(this, nextStep);
     }
 
     _showElement.call(this, nextStep);
