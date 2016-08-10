@@ -73,7 +73,9 @@
       /* Hint button label */
       hintButtonLabel: 'Got it',
       /* Adding animation to hints? */
-      hintAnimation: true
+      hintAnimation: true,
+      /* Show progress in format m/n */
+      showProgressNumbers: false
     };
   }
 
@@ -815,7 +817,9 @@
           oldtooltipTitleLayer      = oldReferenceLayer.querySelector('.introjs-tooltiptitle'),
           oldArrowLayer        = oldReferenceLayer.querySelector('.introjs-arrow'),
           oldtooltipContainer  = oldReferenceLayer.querySelector('.introjs-tooltip'),
-          skipTooltipButton    = oldReferenceLayer.querySelector('.introjs-skipbutton'),
+          progressNumbersLayers = oldReferenceLayer.querySelector('.introjs-progress-numbers'),
+          skipTooltipButton    = oldReferenceLayer.querySelector('.introjs-skipbutton') ||
+            oldReferenceLayer.querySelector('.introjs-donebutton'),
           prevTooltipButton    = oldReferenceLayer.querySelector('.introjs-prevbutton'),
           nextTooltipButton    = oldReferenceLayer.querySelector('.introjs-nextbutton');
 
@@ -878,6 +882,8 @@
         oldReferenceLayer.querySelector('.introjs-bullets li > a[data-stepnumber="' + targetElement.step + '"]').className = 'active';
 
         oldReferenceLayer.querySelector('.introjs-progress .introjs-progressbar').setAttribute('style', 'width:' + _getProgress.call(self) + '%;');
+
+        progressNumbersLayers.innerHTML = _getProgressNumbers.call(self);
 
         //show the tooltip
         oldtooltipContainer.style.opacity = 1;
@@ -989,7 +995,7 @@
       referenceLayer.appendChild(tooltipLayer);
 
       //next button
-      var nextTooltipButton = document.createElement('a');
+      var nextTooltipButton = document.createElement('button');
 
       nextTooltipButton.onclick = function() {
         if (self._introItems.length - 1 != self._currentStep) {
@@ -1001,7 +1007,7 @@
       nextTooltipButton.innerHTML = this._options.nextLabel;
 
       //previous button
-      var prevTooltipButton = document.createElement('a');
+      var prevTooltipButton = document.createElement('button');
 
       prevTooltipButton.onclick = function() {
         if (self._currentStep != 0) {
@@ -1009,11 +1015,15 @@
         }
       };
 
+      var progressNumbers = document.createElement('span');
+      progressNumbers.className = 'introjs-progress-numbers';
+      progressNumbers.innerHTML = _getProgressNumbers.call(self);
+
       _setAnchorAsButton(prevTooltipButton);
       prevTooltipButton.innerHTML = this._options.prevLabel;
 
       //skip button
-      var skipTooltipButton = document.createElement('a');
+      var skipTooltipButton = document.createElement('button');
       skipTooltipButton.className = 'introjs-button introjs-skipbutton';
       _setAnchorAsButton(skipTooltipButton);
       skipTooltipButton.innerHTML = this._options.skipLabel;
@@ -1035,6 +1045,11 @@
       //in order to prevent displaying next/previous button always
       if (this._introItems.length > 1) {
         buttonsLayer.appendChild(prevTooltipButton);
+
+        if (this._options.showProgressNumbers) {
+          buttonsLayer.appendChild(progressNumbers);
+        }
+
         buttonsLayer.appendChild(nextTooltipButton);
       }
 
@@ -1057,14 +1072,23 @@
       prevTooltipButton.tabIndex = '-1';
       nextTooltipButton.className = 'introjs-button introjs-nextbutton';
       skipTooltipButton.innerHTML = this._options.skipLabel;
+      skipTooltipButton.className = 'introjs-button introjs-skipbutton';
+      prevTooltipButton.style.display = 'none';
+      nextTooltipButton.style.display = '';
     } else if (this._introItems.length - 1 == this._currentStep || this._introItems.length == 1) {
       skipTooltipButton.innerHTML = this._options.doneLabel;
+      skipTooltipButton.className = 'introjs-button introjs-donebutton';
       prevTooltipButton.className = 'introjs-button introjs-prevbutton';
       nextTooltipButton.className = 'introjs-button introjs-nextbutton introjs-disabled';
+      prevTooltipButton.style.display = '';
+      nextTooltipButton.style.display = 'none';
       nextTooltipButton.tabIndex = '-1';
     } else {
       prevTooltipButton.className = 'introjs-button introjs-prevbutton';
       nextTooltipButton.className = 'introjs-button introjs-nextbutton';
+      prevTooltipButton.style.display = '';
+      nextTooltipButton.style.display = '';
+      skipTooltipButton.className = 'introjs-button introjs-skipbutton';
       skipTooltipButton.innerHTML = this._options.skipLabel;
     }
 
@@ -1561,7 +1585,7 @@
     var tooltipWrapper = document.createElement('p');
     tooltipWrapper.innerHTML = item.hint;
 
-    var closeButton = document.createElement('a');
+    var closeButton = document.createElement('button');
     closeButton.className = 'introjs-button';
     closeButton.innerHTML = this._options.hintButtonLabel;
     closeButton.onclick = _hideHint.bind(this, stepId);
@@ -1638,7 +1662,12 @@
     // Steps are 0 indexed
     var currentStep = parseInt((this._currentStep + 1), 10);
     return ((currentStep / this._introItems.length) * 100);
-  };
+  }
+
+  function _getProgressNumbers() {
+    var currentStep = +this._currentStep + 1;
+    return [currentStep, this._introItems.length].join('/');
+  }
 
   /**
    * Overwrites obj1's values with obj2's and adds obj2's if non existent in obj1
