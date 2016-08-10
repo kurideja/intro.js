@@ -332,6 +332,9 @@
     }
 
     var nextStep = this._introItems[this._currentStep];
+
+    _reassignElement(nextStep);
+
     if (typeof (this._introBeforeChangeCallback) !== 'undefined') {
       this._introBeforeChangeCallback.call(this, nextStep.element);
     }
@@ -353,11 +356,31 @@
     }
 
     var nextStep = this._introItems[--this._currentStep];
+
+    _reassignElement(nextStep);
+
     if (typeof (this._introBeforeChangeCallback) !== 'undefined') {
+
       this._introBeforeChangeCallback.call(this, nextStep.element);
     }
 
     _showElement.call(this, nextStep);
+  }
+
+  function _reassignElement() {
+    var reselectedElement;
+
+    if (targetElement.element.className.indexOf('introjsFloatingElement') === -1 &&
+      !targetElement.elementSelector) {
+      return;
+    }
+
+    reselectedElement = document.querySelector(targetElement.elementSelector);
+
+    if (reselectedElement) {
+      targetElement.element = reselectedElement;
+      targetElement.position = targetElement.initialPosition || null;
+    }
   }
 
   /**
@@ -765,18 +788,10 @@
    * @param {Object} targetElement
    */
   function _showElement(targetElement) {
-    var reselectedElement;
+    _reassignElement(targetElement);
 
     if (typeof (this._introChangeCallback) !== 'undefined') {
       this._introChangeCallback.call(this, targetElement.element);
-    }
-
-    if (targetElement.elementSelector && targetElement.element.className.indexOf('introjsFloatingElement') > -1) {
-      reselectedElement = document.querySelector(targetElement.elementSelector);
-      if (reselectedElement) {
-        targetElement.element = reselectedElement;
-        targetElement.position = targetElement.initialPosition || 'inherit';
-      }
     }
 
     var self = this,
