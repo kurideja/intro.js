@@ -2,7 +2,7 @@
   "name": "introjs-extended",
   "description": "A better way for new feature introduction and step-by-step users guide for your website and project.",
   "keywords": ["demo", "intro", "introduction"],
-  "homepage": "http://usablica.github.com/intro.js/",
+  "homepage": "https://github.com/kurideja/introjs-extended",
   "author": "Afshin Mehrabani",
   "main": ["intro.js","introjs.css"]
 }
