@@ -372,6 +372,10 @@
   function _reassignElement(targetElement) {
     var reselectedElement;
 
+    if (!targetElement || !targetElement.element) {
+      return;
+    }
+    
     if (targetElement.element.className.indexOf('introjsFloatingElement') === -1 &&
       !targetElement.elementSelector) {
       return;
