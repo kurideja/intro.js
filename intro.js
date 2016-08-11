@@ -804,7 +804,7 @@
         oldHelperLayer = document.querySelector('.introjs-helperLayer'),
         oldReferenceLayer = document.querySelector('.introjs-tooltipReferenceLayer'),
         highlightClass = 'introjs-helperLayer',
-        elementPosition = _getOffset(targetElement.element);
+        elementPosition = _getOffset(targetElement ? targetElement.element : {});
 
     //check for a current step highlight class
     if (typeof (targetElement.highlightClass) === 'string') {
