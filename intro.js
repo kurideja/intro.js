@@ -371,10 +371,6 @@
 
   function _reassignElement(targetElement) {
     var reselectedElement;
-
-    if (!targetElement || !targetElement.element) {
-      return;
-    }
     
     if (targetElement.element.className.indexOf('introjsFloatingElement') === -1 &&
       !targetElement.elementSelector) {
@@ -794,7 +790,6 @@
    * @param {Object} targetElement
    */
   function _showElement(targetElement) {
-    targetElement = targetElement || {};
     _reassignElement(targetElement);
 
     if (typeof (this._introChangeCallback) !== 'undefined') {
@@ -805,7 +800,7 @@
         oldHelperLayer = document.querySelector('.introjs-helperLayer'),
         oldReferenceLayer = document.querySelector('.introjs-tooltipReferenceLayer'),
         highlightClass = 'introjs-helperLayer',
-        elementPosition = _getOffset(targetElement ? targetElement.element : {});
+        elementPosition = _getOffset(targetElement.element);
 
     //check for a current step highlight class
     if (typeof (targetElement.highlightClass) === 'string') {
