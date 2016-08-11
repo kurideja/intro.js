@@ -794,6 +794,7 @@
    * @param {Object} targetElement
    */
   function _showElement(targetElement) {
+    targetElement = targetElement || {};
     _reassignElement(targetElement);
 
     if (typeof (this._introChangeCallback) !== 'undefined') {
